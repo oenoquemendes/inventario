@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-<!-- ====================================================================== -->
-<!--  Desenvolvido por Levi Lucena - linkedin.com/in/levilucena -->
-<!-- ====================================================================== -->
 <html>
 <head>
 <link rel="stylesheet" href="style.css">
