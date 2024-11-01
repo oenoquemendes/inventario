@@ -1,15 +1,26 @@
+<?php
+
+error_reporting(0);
+ini_set("display_errors", 0 );
+
+require "mods/menu.php";
+require "mods/funcoes.php";
+
+
+?>
 <!DOCTYPE html>
-<!-- ====================================================================== -->
-<!--  Desenvolvido por Levi Lucena - linkedin.com/in/levilucena -->
-<!-- ====================================================================== -->
 <html>
 <head>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Gestão de Entrada e Saída</title>
 
     <!-- Adicione os arquivos CSS do Bootstrap e DataTables -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+    
+    <!-- Icones Awesome -->
+    <script src="https://use.fontawesome.com/releases/v5.14.0/js/all.js" data-auto-replace-svg="nest"></script>
 
     <!-- Adicione os arquivos JS do jQuery, Bootstrap e DataTables -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -18,114 +29,50 @@
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
 </head>
 <body>
+<div class="menu-title">
+        <!-- <img src="imagens/inventario.png" alt="Imagem Inventario"> -->
+        <h1><span>Gestão de Inventário de TI</span></h1>
+    </div>
 
 <!-- Botão "Voltar" -->
-<div class="text-left" style="margin-top: 20px;">
-    <button onclick="window.location.href='index.php'" class="btn btn-primary">Voltar</button>
-</div>
 
-
-<h1 class="text-center">Gestão de Entrada e Saída de Equipamento - Monitor</h1>
-<form method="post" action="inserir.php">
-    <!-- Formulário para registrar entrada/saída -->
-    <div class="form-container inline">
-        <div class="form-group">
-            <label for="MARCA">Marca:</label>
-            <input type="text" name="MARCA" id="MARCA" class="form-control" required>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="index.php">Home Page</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+            <?php listaMenu('menu_horizontal');?>
+            </ul>
         </div>
-
-        <div class="form-group">
-            <label for="MODELO">Modelo:</label>
-            <input type="text" name="MODELO" id="MODELO" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-            <label for="SERIE">Série:</label>
-            <input type="text" name="SERIE" id="SERIE" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-            <label for="TAMANHO">Tamanho:</label>
-            <input type="text" name="TAMANHO" id="TAMANHO" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-            <label for="RESOLUCAO">Resolução:</label>
-            <input type="text" name="RESOLUCAO" id="RESOLUCAO" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-            <label for="QUANTIDADE">Quantidade:</label>
-            <input type="text" name="QUANTIDADE" id="QUANTIDADE" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="OBS">Observação:</label>
-            <input type="text" name="OBS" id="OBS" class="form-control" required>
-        </div>
-
-        <button type="submit" name="submit_insert" class="btn btn-primary btn-lg">
-            <span class="glyphicon glyphicon-plus"></span> Inserir
-        </button>
-
-    </div>    
-</form>
-
+    </div>
+</nav>
 
 <?php
-// Função para exibir os dados da tabela "notebook"
-function exibirTabela($conexao)
-{
-    $sql = "SELECT * FROM monitor";
-    $resultado = mysqli_query($conexao, $sql);
-
-    if (mysqli_num_rows($resultado) > 0) {
-        echo '<h2>Entrada Monitor</h2>';
-        echo '<table id="monitor-table" class="table table-striped table-bordered">';
-        echo '<thead><tr><th>ID</th><th>Marca</th><th>Modelo</th><th>Série</th><th>Tamanho</th><th>Resolução</th><th>Quantidade</th><th>Obs</th><th>Ações</th></tr></thead>';
-        echo '<tbody>';
-
-        while ($row = mysqli_fetch_assoc($resultado)) {
-            echo '<tr>';
-            echo '<td>' . $row['ID'] . '</td>';
-            echo '<td>' . $row['MARCA'] . '</td>';
-            echo '<td>' . $row['MODELO'] . '</td>';
-            echo '<td>' . $row['SERIE'] . '</td>';
-            echo '<td>' . $row['TAMANHO'] . '</td>';
-            echo '<td>' . $row['RESOLUCAO'] . '</td>';
-            echo '<td>' . $row['QUANTIDADE'] . '</td>';
-            echo '<td>' . $row['OBS'] . '</td>';
-            echo '<td><button class="btn btn-primary btn-editar"><span class="glyphicon glyphicon-pencil"></span> Editar</button>';
-            echo '<button class="btn btn-success btn-saida"><span class="glyphicon glyphicon-export"></span> Saída</button>';
-            echo '</td>';
-            echo '</tr>';
-        }
-
-        echo '</tbody>';
-        echo '</table>';
-    }
-}
-
+// Função para exibir os dados da tabela "cpu"
+listaEquipCategoria($_POST['tipo'],'lista_entrada');
 // Função para exibir os dados da tabela "saida_cpu"
-function exibirTabelaMonitorSaida($conexao)
+listaEquipCategoria($_POST['tipo'],'lista_saida');
+function exibirTabelaCpuSaida($conexao)
 {
-    $sql = "SELECT * FROM monitor_saida";
+    $sql = "SELECT * FROM cpu_saida";
     $resultado = mysqli_query($conexao, $sql);
 
     if (mysqli_num_rows($resultado) > 0) {
-        echo '<h2>Saida Monitor</h2>';
-        echo '<table id="monitor_saida-table" class="table table-striped table-bordered">';
-        echo '<thead><tr><th>MONITOR_ID</th><th>Marca</th><th>Modelo</th><th>Série</th><th>Tamanho</th><th>Resolução</th><th>Quantidade</th><th>Obs</th><th>Ações</th></tr></thead>';
+        echo '<h2>Saida CPU</h2>';
+        echo '<table id="cpu_saida-table" class="table table-striped table-bordered">';
+        echo '<thead><tr><th>CPU_ID</th><th>Marca</th><th>Modelo</th><th>Série</th><th>Patrimônio</th><th>Processador</th><th>Memória Ram</th><th>Armazenamento</th><th>Quantidade</th><th>Obs</th><th>Ações</th></tr></thead>';
         echo '<tbody>';
 
         while ($row = mysqli_fetch_assoc($resultado)) {
             echo '<tr>';
-            echo '<td>' . $row['MONITOR_ID'] . '</td>';
+            echo '<td>' . $row['CPU_ID'] . '</td>';
             echo '<td>' . $row['MARCA'] . '</td>';
             echo '<td>' . $row['MODELO'] . '</td>';
             echo '<td>' . $row['SERIE'] . '</td>';
-            echo '<td>' . $row['TAMANHO'] . '</td>';
-            echo '<td>' . $row['RESOLUCAO'] . '</td>';
+            echo '<td>' . $row['PATRIMONIO'] . '</td>';
+            echo '<td>' . $row['PROCESSADOR'] . '</td>';
+            echo '<td>' . $row['MEMORIA_RAM'] . '</td>';
+            echo '<td>' . $row['ARMAZENAMENTO'] . '</td>';
             echo '<td>' . $row['QUANTIDADE'] . '</td>';
             echo '<td>' . $row['OBS'] . '</td>';
             echo '<td><button class="btn btn-primary btn-editar"><span class="glyphicon glyphicon-pencil"></span> Editar</button>';
@@ -157,8 +104,10 @@ if (mysqli_connect_errno()) {
         $MARCA = mysqli_real_escape_string($conexao, $_POST['MARCA']);
         $MODELO = mysqli_real_escape_string($conexao, $_POST['MODELO']);
         $SERIE = mysqli_real_escape_string($conexao, $_POST['SERIE']);
-        $TAMANHO = mysqli_real_escape_string($conexao, $_POST['TAMANHO']);
-        $RESOLUCAO = mysqli_real_escape_string($conexao, $_POST['RESOLUCAO']);
+        $PATRIMONIO = mysqli_real_escape_string($conexao, $_POST['PATRIMONIO']);
+        $PROCESSADOR = mysqli_real_escape_string($conexao, $_POST['PROCESSADOR']);
+        $MEMORIA_RAM = mysqli_real_escape_string($conexao, $_POST['MEMORIA_RAM']);
+        $ARMAZENAMENTO = mysqli_real_escape_string($conexao, $_POST['ARMAZENAMENTO']);
         $QUANTIDADE = mysqli_real_escape_string($conexao, $_POST['QUANTIDADE']);
         $OBS = mysqli_real_escape_string($conexao, $_POST['OBS']);
 
@@ -169,7 +118,7 @@ if (mysqli_connect_errno()) {
 
 
 
-        if (empty($MARCA) || empty($MODELO) || empty($SERIE) || empty($TAMANHO) || empty($RESOLUCAO) || empty($QUANTIDADE) || empty($OBS)) {
+        if (empty($MARCA) || empty($MODELO) || empty($SERIE) || empty($PATRIMONIO) ||empty($PROCESSADOR) || empty($MEMORIA_RAM) || empty($ARMAZENAMENTO) || empty($QUANTIDADE) || empty($OBS)) {
             $errors[] = "Todos os campos são obrigatórios.";
         }
 
@@ -178,24 +127,24 @@ if (mysqli_connect_errno()) {
             echo '<div class="message error">' . implode('<br>', $errors) . '</div>';
         } else {
             // Verifica se há a quantidade disponível para transferir
-            $sql_check_quantity = "SELECT QUANTIDADE FROM monitor WHERE QUANTIDADE >= ?";
+            $sql_check_quantity = "SELECT QUANTIDADE FROM cpu WHERE QUANTIDADE >= ?";
             $stmt_check_quantity = mysqli_prepare($conexao, $sql_check_quantity);
             mysqli_stmt_bind_param($stmt_check_quantity, "i", $QUANTIDADE);
             mysqli_stmt_execute($stmt_check_quantity);
             $resultado_check_quantity = mysqli_stmt_get_result($stmt_check_quantity);
 
             if (mysqli_num_rows($resultado_check_quantity) > 0) {
-                // Insere o registro na tabela "monitor_saida"
-                $sql_insert_saida = "INSERT INTO monitor_saida (MARCA, MODELO, SERIE, TAMANHO, RESOLUCAO, QUANTIDADE, OBS) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                // Insere o registro na tabela "cpu_saida"
+                $sql_insert_saida = "INSERT INTO cpu_saida (MARCA, MODELO, SERIE, PATRIMONIO, PROCESSADOR, MEMORIA_RAM, ARMAZENAMENTO, QUANTIDADE, OBS) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt_insert_saida = mysqli_prepare($conexao, $sql_insert_saida);
-                mysqli_stmt_bind_param($stmt_insert_saida, "ssssssis", $MARCA, $MODELO, $SERIE, $TAMANHO, $RESOLUCAO, $QUANTIDADE, $OBS);
+                mysqli_stmt_bind_param($stmt_insert_saida, "ssssssis", $marca, $MODELO, $SERIE, $PATRIMONIO, $PROCESSADOR, $MEMORIA_RAM, $ARMAZENAMENTO, $QUANTIDADE, $OBS);
 
                 if (mysqli_stmt_execute($stmt_insert_saida)) {
-                    // Atualiza a quantidade na tabela "monitor"
-                    $sql_update_monitor = "UPDATE monitor SET QUANTIDADE = QUANTIDADE - ? WHERE QUANTIDADE >= ?";
-                    $stmt_update_monitor = mysqli_prepare($conexao, $sql_update_monitor);
-                    mysqli_stmt_bind_param($stmt_update_monitor, "ii", $QUANTIDADE, $QUANTIDADE);
-                    mysqli_stmt_execute($stmt_update_monitor);
+                    // Atualiza a quantidade na tabela "cpu"
+                    $sql_update_cpu = "UPDATE cpu SET QUANTIDADE = QUANTIDADE - ? WHERE QUANTIDADE >= ?";
+                    $stmt_update_cpu = mysqli_prepare($conexao, $sql_update_cpu);
+                    mysqli_stmt_bind_param($stmt_update_cpu, "ii", $QUANTIDADE, $QUANTIDADE);
+                    mysqli_stmt_execute($stmt_update_cpu);
 
                     echo '<div class="message success">Registro realizado com sucesso.</div>';
                 } else {
@@ -209,7 +158,7 @@ if (mysqli_connect_errno()) {
 
     // Exibe os dados das tabelas
     exibirTabela($conexao);
-    exibirTabelaMonitorSaida($conexao);
+    exibirTabelaCpuSaida($conexao);
 
     // Fecha a conexão com o banco de dados
     mysqli_close($conexao);
@@ -220,9 +169,9 @@ if (mysqli_connect_errno()) {
 <script>
     $(document).ready(function() {
         // Inicializa o DataTables para cada tabela
-        $('#monitor-table').DataTable();
+        $('#cpu-table').DataTable();
         // Use o ID correto para a tabela "cpu_saida"
-        $('#monitor_saida-table').DataTable(); 
+        $('#cpu_saida-table').DataTable(); 
 
         // Evento de clique para o botão "Saída"
         $('.btn-saida').click(function() {
@@ -265,10 +214,10 @@ if (mysqli_connect_errno()) {
         // Evento de clique para o botão "Editar"
         $('.btn-editar').click(function() {
             var row = $(this).closest('tr');
-            var idmonitor = row.find('td:first').text();
+            var idcpu = row.find('td:first').text();
 
             // Abre uma nova janela com os campos dimensionados para a edição
-            window.open('monitor_editar.php?id=' + idmonitor, '_blank', 'width=800,height=300');
+            window.open('cpu_editar.php?id=' + idcpu, '_blank', 'width=800,height=300');
         });
 
 

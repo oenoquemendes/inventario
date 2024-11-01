@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.1.1deb3+bionic1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Tempo de geração: 02/08/2023 às 21:41
--- Versão do servidor: 10.4.28-MariaDB
--- Versão do PHP: 8.2.4
+-- Host: localhost:3306
+-- Tempo de geração: 30-Out-2024 às 20:37
+-- Versão do servidor: 5.7.42-0ubuntu0.18.04.1
+-- versão do PHP: 7.4.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Banco de dados: `inventario`
+-- Banco de dados: `INVENTARIO`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `componentes`
+-- Estrutura da tabela `componentes`
 --
 
 CREATE TABLE `componentes` (
@@ -36,10 +36,10 @@ CREATE TABLE `componentes` (
   `DESCRICAO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `componentes`
+-- Extraindo dados da tabela `componentes`
 --
 
 INSERT INTO `componentes` (`ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `DESCRICAO`, `QUANTIDADE`, `OBS`) VALUES
@@ -51,7 +51,7 @@ INSERT INTO `componentes` (`ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `DESCRICAO`
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `componentes_saida`
+-- Estrutura da tabela `componentes_saida`
 --
 
 CREATE TABLE `componentes_saida` (
@@ -63,10 +63,10 @@ CREATE TABLE `componentes_saida` (
   `DESCRICAO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `componentes_saida`
+-- Extraindo dados da tabela `componentes_saida`
 --
 
 INSERT INTO `componentes_saida` (`COMPONENTE_ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `DESCRICAO`, `QUANTIDADE`, `OBS`) VALUES
@@ -75,7 +75,7 @@ INSERT INTO `componentes_saida` (`COMPONENTE_ID`, `MARCA`, `MODELO`, `SERIE`, `T
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `cpu`
+-- Estrutura da tabela `cpu`
 --
 
 CREATE TABLE `cpu` (
@@ -83,27 +83,27 @@ CREATE TABLE `cpu` (
   `MARCA` varchar(100) NOT NULL,
   `MODELO` varchar(100) NOT NULL,
   `SERIE` varchar(100) NOT NULL,
+  `PATRIMONIO` varchar(100) NOT NULL,
   `PROCESSADOR` varchar(100) NOT NULL,
   `MEMORIA_RAM` varchar(100) NOT NULL,
   `ARMAZENAMENTO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `cpu`
+-- Extraindo dados da tabela `cpu`
 --
 
-INSERT INTO `cpu` (`ID`, `MARCA`, `MODELO`, `SERIE`, `PROCESSADOR`, `MEMORIA_RAM`, `ARMAZENAMENTO`, `QUANTIDADE`, `OBS`) VALUES
-(1, 'Marca A', 'Modelo 1', 'ABC123', 'Intel Core i5-9400F', '8GB DDR4', '256GB SSD', 29, 'Clock base de 2.9GHz'),
-(2, 'Marca B', 'Modelo 2', 'DEF456', 'AMD Ryzen 7 3700X', '16GB DDR4', '1TB HDD', 44, 'Clock base de 3.6GHz'),
-(3, 'Marca C', 'Modelo 3', 'GHI789', 'Intel Core i7-10700K', '32GB DDR4', '512GB NVMe SSD', 59, 'Desbloqueado para overclocking'),
-(4, 'Marca D', 'Modelo 4', 'JKL012', 'AMD Ryzen 5 5600X', '16GB DDR4', '500GB NVMe SSD', 34, 'Clock base de 3.7GHz');
+INSERT INTO `cpu` (`ID`, `MARCA`, `MODELO`, `SERIE`, `PATRIMONIO`, `PROCESSADOR`, `MEMORIA_RAM`, `ARMAZENAMENTO`, `QUANTIDADE`, `OBS`) VALUES
+(1, 'HP', 'INFOWAY SM 330', '-', '052000287', '-', '-', '500GB HDD', 1, '-'),
+(2, 'POSITIVO', 'POS MASTER MINI PRO', '4AF41CG1C', '005009015', '-', '-', '500GB HDD', 1, '-'),
+(3, 'POSITIVO', 'POS MASTER MINI PRO', '4AF41CH4U', '005009018', '-', '-', '500GB HDD', 1, '-');
 
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `cpu_saida`
+-- Estrutura da tabela `cpu_saida`
 --
 
 CREATE TABLE `cpu_saida` (
@@ -111,24 +111,18 @@ CREATE TABLE `cpu_saida` (
   `MARCA` varchar(100) NOT NULL,
   `MODELO` varchar(100) NOT NULL,
   `SERIE` varchar(100) NOT NULL,
+  `PATRIMONIO` varchar(100) NOT NULL,
   `PROCESSADOR` varchar(100) NOT NULL,
   `MEMORIA_RAM` varchar(100) NOT NULL,
   `ARMAZENAMENTO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `cpu_saida`
---
-
-INSERT INTO `cpu_saida` (`CPU_ID`, `MARCA`, `MODELO`, `SERIE`, `PROCESSADOR`, `MEMORIA_RAM`, `ARMAZENAMENTO`, `QUANTIDADE`, `OBS`) VALUES
-(1, 'Marca E', 'Modelo 5', '123456789', 'Intel Core i7', '16GB DDR4', '1TB SSD', 5, 'Novo processador para a equipe de desenvolvimento.');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `disco`
+-- Estrutura da tabela `disco`
 --
 
 CREATE TABLE `disco` (
@@ -140,10 +134,10 @@ CREATE TABLE `disco` (
   `CONEXAO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `disco`
+-- Extraindo dados da tabela `disco`
 --
 
 INSERT INTO `disco` (`ID`, `MARCA`, `CAPACIDADE`, `VELOCIDADE`, `INTERFACE`, `CONEXAO`, `QUANTIDADE`, `OBS`) VALUES
@@ -156,7 +150,7 @@ INSERT INTO `disco` (`ID`, `MARCA`, `CAPACIDADE`, `VELOCIDADE`, `INTERFACE`, `CO
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `disco_saida`
+-- Estrutura da tabela `disco_saida`
 --
 
 CREATE TABLE `disco_saida` (
@@ -168,10 +162,10 @@ CREATE TABLE `disco_saida` (
   `CONEXAO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `disco_saida`
+-- Extraindo dados da tabela `disco_saida`
 --
 
 INSERT INTO `disco_saida` (`DISCO_ID`, `MARCA`, `CAPACIDADE`, `VELOCIDADE`, `INTERFACE`, `CONEXAO`, `QUANTIDADE`, `OBS`) VALUES
@@ -180,7 +174,7 @@ INSERT INTO `disco_saida` (`DISCO_ID`, `MARCA`, `CAPACIDADE`, `VELOCIDADE`, `INT
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `impressora`
+-- Estrutura da tabela `impressora`
 --
 
 CREATE TABLE `impressora` (
@@ -191,10 +185,10 @@ CREATE TABLE `impressora` (
   `TIPO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `impressora`
+-- Extraindo dados da tabela `impressora`
 --
 
 INSERT INTO `impressora` (`ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `QUANTIDADE`, `OBS`) VALUES
@@ -206,7 +200,7 @@ INSERT INTO `impressora` (`ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `QUANTIDADE`
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `impressora_saida`
+-- Estrutura da tabela `impressora_saida`
 --
 
 CREATE TABLE `impressora_saida` (
@@ -217,10 +211,10 @@ CREATE TABLE `impressora_saida` (
   `TIPO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `impressora_saida`
+-- Extraindo dados da tabela `impressora_saida`
 --
 
 INSERT INTO `impressora_saida` (`IMPRESSORA_ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `QUANTIDADE`, `OBS`) VALUES
@@ -229,7 +223,7 @@ INSERT INTO `impressora_saida` (`IMPRESSORA_ID`, `MARCA`, `MODELO`, `SERIE`, `TI
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `monitor`
+-- Estrutura da tabela `monitor`
 --
 
 CREATE TABLE `monitor` (
@@ -241,10 +235,10 @@ CREATE TABLE `monitor` (
   `RESOLUCAO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `monitor`
+-- Extraindo dados da tabela `monitor`
 --
 
 INSERT INTO `monitor` (`ID`, `MARCA`, `MODELO`, `SERIE`, `TAMANHO`, `RESOLUCAO`, `QUANTIDADE`, `OBS`) VALUES
@@ -256,7 +250,7 @@ INSERT INTO `monitor` (`ID`, `MARCA`, `MODELO`, `SERIE`, `TAMANHO`, `RESOLUCAO`,
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `monitor_saida`
+-- Estrutura da tabela `monitor_saida`
 --
 
 CREATE TABLE `monitor_saida` (
@@ -268,10 +262,10 @@ CREATE TABLE `monitor_saida` (
   `RESOLUCAO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `monitor_saida`
+-- Extraindo dados da tabela `monitor_saida`
 --
 
 INSERT INTO `monitor_saida` (`MONITOR_ID`, `MARCA`, `MODELO`, `SERIE`, `TAMANHO`, `RESOLUCAO`, `QUANTIDADE`, `OBS`) VALUES
@@ -280,7 +274,7 @@ INSERT INTO `monitor_saida` (`MONITOR_ID`, `MARCA`, `MODELO`, `SERIE`, `TAMANHO`
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `mouse`
+-- Estrutura da tabela `mouse`
 --
 
 CREATE TABLE `mouse` (
@@ -291,10 +285,10 @@ CREATE TABLE `mouse` (
   `TIPO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `mouse`
+-- Extraindo dados da tabela `mouse`
 --
 
 INSERT INTO `mouse` (`ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `QUANTIDADE`, `OBS`) VALUES
@@ -306,7 +300,7 @@ INSERT INTO `mouse` (`ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `QUANTIDADE`, `OB
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `mouse_saida`
+-- Estrutura da tabela `mouse_saida`
 --
 
 CREATE TABLE `mouse_saida` (
@@ -317,10 +311,10 @@ CREATE TABLE `mouse_saida` (
   `TIPO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `mouse_saida`
+-- Extraindo dados da tabela `mouse_saida`
 --
 
 INSERT INTO `mouse_saida` (`MOUSE_ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `QUANTIDADE`, `OBS`) VALUES
@@ -329,7 +323,7 @@ INSERT INTO `mouse_saida` (`MOUSE_ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `QUAN
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `notebook`
+-- Estrutura da tabela `notebook`
 --
 
 CREATE TABLE `notebook` (
@@ -342,10 +336,10 @@ CREATE TABLE `notebook` (
   `ARMAZENAMENTO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `notebook`
+-- Extraindo dados da tabela `notebook`
 --
 
 INSERT INTO `notebook` (`ID`, `MARCA`, `MODELO`, `SERIE`, `PROCESSADOR`, `MEMORIA_RAM`, `ARMAZENAMENTO`, `QUANTIDADE`, `OBS`) VALUES
@@ -357,7 +351,7 @@ INSERT INTO `notebook` (`ID`, `MARCA`, `MODELO`, `SERIE`, `PROCESSADOR`, `MEMORI
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `notebook_saida`
+-- Estrutura da tabela `notebook_saida`
 --
 
 CREATE TABLE `notebook_saida` (
@@ -370,10 +364,10 @@ CREATE TABLE `notebook_saida` (
   `ARMAZENAMENTO` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `notebook_saida`
+-- Extraindo dados da tabela `notebook_saida`
 --
 
 INSERT INTO `notebook_saida` (`NOTEBOOK_ID`, `MARCA`, `MODELO`, `SERIE`, `PROCESSADOR`, `MEMORIA_RAM`, `ARMAZENAMENTO`, `QUANTIDADE`, `OBS`) VALUES
@@ -382,7 +376,7 @@ INSERT INTO `notebook_saida` (`NOTEBOOK_ID`, `MARCA`, `MODELO`, `SERIE`, `PROCES
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `teclado`
+-- Estrutura da tabela `teclado`
 --
 
 CREATE TABLE `teclado` (
@@ -394,10 +388,10 @@ CREATE TABLE `teclado` (
   `LAYOUT` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `teclado`
+-- Extraindo dados da tabela `teclado`
 --
 
 INSERT INTO `teclado` (`ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `LAYOUT`, `QUANTIDADE`, `OBS`) VALUES
@@ -409,7 +403,7 @@ INSERT INTO `teclado` (`ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `LAYOUT`, `QUAN
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `teclado_saida`
+-- Estrutura da tabela `teclado_saida`
 --
 
 CREATE TABLE `teclado_saida` (
@@ -421,10 +415,10 @@ CREATE TABLE `teclado_saida` (
   `LAYOUT` varchar(100) NOT NULL,
   `QUANTIDADE` int(11) NOT NULL,
   `OBS` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Despejando dados para a tabela `teclado_saida`
+-- Extraindo dados da tabela `teclado_saida`
 --
 
 INSERT INTO `teclado_saida` (`TECLADO_ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `LAYOUT`, `QUANTIDADE`, `OBS`) VALUES
@@ -435,103 +429,103 @@ INSERT INTO `teclado_saida` (`TECLADO_ID`, `MARCA`, `MODELO`, `SERIE`, `TIPO`, `
 --
 
 --
--- Índices de tabela `componentes`
+-- Índices para tabela `componentes`
 --
 ALTER TABLE `componentes`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Índices de tabela `componentes_saida`
+-- Índices para tabela `componentes_saida`
 --
 ALTER TABLE `componentes_saida`
   ADD KEY `componente_id` (`COMPONENTE_ID`);
 
 --
--- Índices de tabela `cpu`
+-- Índices para tabela `cpu`
 --
 ALTER TABLE `cpu`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Índices de tabela `cpu_saida`
+-- Índices para tabela `cpu_saida`
 --
 ALTER TABLE `cpu_saida`
   ADD KEY `CPU_ID` (`CPU_ID`);
 
 --
--- Índices de tabela `disco`
+-- Índices para tabela `disco`
 --
 ALTER TABLE `disco`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Índices de tabela `disco_saida`
+-- Índices para tabela `disco_saida`
 --
 ALTER TABLE `disco_saida`
   ADD PRIMARY KEY (`DISCO_ID`);
 
 --
--- Índices de tabela `impressora`
+-- Índices para tabela `impressora`
 --
 ALTER TABLE `impressora`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Índices de tabela `impressora_saida`
+-- Índices para tabela `impressora_saida`
 --
 ALTER TABLE `impressora_saida`
   ADD PRIMARY KEY (`IMPRESSORA_ID`);
 
 --
--- Índices de tabela `monitor`
+-- Índices para tabela `monitor`
 --
 ALTER TABLE `monitor`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Índices de tabela `monitor_saida`
+-- Índices para tabela `monitor_saida`
 --
 ALTER TABLE `monitor_saida`
   ADD PRIMARY KEY (`MONITOR_ID`);
 
 --
--- Índices de tabela `mouse`
+-- Índices para tabela `mouse`
 --
 ALTER TABLE `mouse`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Índices de tabela `mouse_saida`
+-- Índices para tabela `mouse_saida`
 --
 ALTER TABLE `mouse_saida`
   ADD PRIMARY KEY (`MOUSE_ID`);
 
 --
--- Índices de tabela `notebook`
+-- Índices para tabela `notebook`
 --
 ALTER TABLE `notebook`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Índices de tabela `notebook_saida`
+-- Índices para tabela `notebook_saida`
 --
 ALTER TABLE `notebook_saida`
   ADD PRIMARY KEY (`NOTEBOOK_ID`);
 
 --
--- Índices de tabela `teclado`
+-- Índices para tabela `teclado`
 --
 ALTER TABLE `teclado`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Índices de tabela `teclado_saida`
+-- Índices para tabela `teclado_saida`
 --
 ALTER TABLE `teclado_saida`
   ADD PRIMARY KEY (`TECLADO_ID`);
 
 --
--- AUTO_INCREMENT para tabelas despejadas
+-- AUTO_INCREMENT de tabelas despejadas
 --
 
 --
@@ -544,7 +538,7 @@ ALTER TABLE `componentes`
 -- AUTO_INCREMENT de tabela `cpu`
 --
 ALTER TABLE `cpu`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `disco`
@@ -583,53 +577,53 @@ ALTER TABLE `teclado`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- Restrições para tabelas despejadas
+-- Restrições para despejos de tabelas
 --
 
 --
--- Restrições para tabelas `componentes_saida`
+-- Limitadores para a tabela `componentes_saida`
 --
 ALTER TABLE `componentes_saida`
-  ADD CONSTRAINT `componentes_saida_ibfk_1` FOREIGN KEY (`componente_id`) REFERENCES `componentes` (`ID`);
+  ADD CONSTRAINT `componentes_saida_ibfk_1` FOREIGN KEY (`COMPONENTE_ID`) REFERENCES `componentes` (`ID`);
 
 --
--- Restrições para tabelas `cpu_saida`
+-- Limitadores para a tabela `cpu_saida`
 --
 ALTER TABLE `cpu_saida`
   ADD CONSTRAINT `cpu_saida_ibfk_1` FOREIGN KEY (`CPU_ID`) REFERENCES `cpu` (`ID`);
 
 --
--- Restrições para tabelas `disco_saida`
+-- Limitadores para a tabela `disco_saida`
 --
 ALTER TABLE `disco_saida`
   ADD CONSTRAINT `disco_saida_ibfk_1` FOREIGN KEY (`DISCO_ID`) REFERENCES `disco` (`ID`);
 
 --
--- Restrições para tabelas `impressora_saida`
+-- Limitadores para a tabela `impressora_saida`
 --
 ALTER TABLE `impressora_saida`
   ADD CONSTRAINT `impressora_saida_ibfk_1` FOREIGN KEY (`IMPRESSORA_ID`) REFERENCES `impressora` (`ID`);
 
 --
--- Restrições para tabelas `monitor_saida`
+-- Limitadores para a tabela `monitor_saida`
 --
 ALTER TABLE `monitor_saida`
   ADD CONSTRAINT `monitor_saida_ibfk_1` FOREIGN KEY (`MONITOR_ID`) REFERENCES `monitor` (`ID`);
 
 --
--- Restrições para tabelas `mouse_saida`
+-- Limitadores para a tabela `mouse_saida`
 --
 ALTER TABLE `mouse_saida`
   ADD CONSTRAINT `mouse_saida_ibfk_1` FOREIGN KEY (`MOUSE_ID`) REFERENCES `mouse` (`ID`);
 
 --
--- Restrições para tabelas `notebook_saida`
+-- Limitadores para a tabela `notebook_saida`
 --
 ALTER TABLE `notebook_saida`
   ADD CONSTRAINT `notebook_saida_ibfk_1` FOREIGN KEY (`NOTEBOOK_ID`) REFERENCES `notebook` (`ID`);
 
 --
--- Restrições para tabelas `teclado_saida`
+-- Limitadores para a tabela `teclado_saida`
 --
 ALTER TABLE `teclado_saida`
   ADD CONSTRAINT `teclado_saida_ibfk_1` FOREIGN KEY (`TECLADO_ID`) REFERENCES `teclado` (`ID`);

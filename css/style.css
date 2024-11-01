@@ -66,6 +66,7 @@ table td {
     transition: background-color 0.3s;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
+    text-align: center; /* Centraliza o texto e os elementos inline */
 }
 
 .menu-item:hover {
