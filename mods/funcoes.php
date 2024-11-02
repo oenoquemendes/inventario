@@ -12,6 +12,7 @@ function listaEquipCategoria($tipo,$var){
   }
 
   if ($var == 'lista_entrada') {
+
     $banco = strtolower($tipo);
 
     
@@ -28,41 +29,31 @@ function listaEquipCategoria($tipo,$var){
                               <tr>';
 
     // Obter os nomes das colunas
-    $sql = "SELECT * FROM $banco";
+    $sql = "SELECT * FROM $banco WHERE $banco.QUANTIDADE>='1'";
     $sql_temp = $PDO->query($sql);
 
     // Adicionar os cabeçalhos da tabela
-    /*
     for ($i = 0; $i < $sql_temp->columnCount(); $i++) {
         $meta = $sql_temp->getColumnMeta($i);
         $lista_entrada .= '<th>' . htmlspecialchars($meta['name']) . '</th>';
+
+        if(htmlspecialchars($meta['name'])=='ID'){
+            $readonlyTag = 'readonly';
+        }else{
+            $readonlyTag = 'required';
+        }
+
+        if((htmlspecialchars($meta['name'])=='QUANTIDADE')||((htmlspecialchars($meta['name'])=='SALA'))){
+            $tipoinput = 'number';
+        }else{
+            $tipoinput = 'text';
+        }
         $campos_modal .= '<div class="form-group">
-                                                    <label for="inputID">' . htmlspecialchars($meta['name']) . '</label>
-                                                    <input type="text" class="form-control" id="inputID" name="" value=" " >
-                                                </div>';
-    }*/
-    // Adicionar o cabeçalho da tabela
-for ($i = 0; $i < $sql_temp->columnCount(); $i++) {
-    $meta = $sql_temp->getColumnMeta($i);
-    $lista_entrada .= '<th>' . htmlspecialchars($meta['name']) . '</th>';
-
-    if(htmlspecialchars($meta['name'])=='ID'){
-        $readonlyTag = 'readonly';
-    }else{
-        $readonlyTag = 'required';
+                            <input type="hidden" name="tiporeg" value="'.$banco.'"  id="'.$banco.'">
+                                <label for="inputID">' . htmlspecialchars($meta['name']) . '</label>
+                                <input type="'.$tipoinput.'" class="form-control" id="inputID" name="' . htmlspecialchars($meta['name']) . '" value=" " '.$readonlyTag.'>
+                         </div>';
     }
-
-    if((htmlspecialchars($meta['name'])=='QUANTIDADE')||((htmlspecialchars($meta['name'])=='SALA'))){
-        $tipoinput = 'number';
-    }else{
-        $tipoinput = 'text';
-    }
-    $campos_modal .= '<div class="form-group">
-                        <input type="hidden" name="tiporeg" value="'.$banco.'"  id="'.$banco.'">
-                                                    <label for="inputID">' . htmlspecialchars($meta['name']) . '</label>
-                                                    <input type="'.$tipoinput.'" class="form-control" id="inputID" name="' . htmlspecialchars($meta['name']) . '" value=" " '.$readonlyTag.'>
-                                                </div>';
-}
 
 // Adicionar a coluna de ações
 $lista_entrada .= '<th>Ações</th>';
@@ -89,7 +80,7 @@ while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
                     </div>
                     <div class="modal-body">
                         <!-- Conteúdo do formulário de edição -->
-                        <form>';
+                        <form action="mods/update.php" method="POST">';
 
     // Construir os campos de entrada no modal com valores específicos
     foreach ($row as $coluna => $valor) {
@@ -123,7 +114,8 @@ while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
                         
                     </div>
                     <div class="modal-footer">
-                     <button type="submit" class="btn btn-primary">Salvar alterações</button>
+                    <input type="hidden" name="tiporeg" value="'.$banco.'"  id="'.$banco.'">
+                        <button type="submit" class="btn btn-primary">Salvar alterações</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                         </form>
                     </div>
@@ -157,7 +149,7 @@ while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
                                         </div>
                                         <div class="modal-body">
                                             <!-- Conteúdo do formulário de edição -->
-                                            <form action="mods/new.php" method="POST">
+                                            <form action="mods/update.php" method="POST">
                                                 '.$campos_modal.'    
                                         </div>
                                         <div class="modal-footer">

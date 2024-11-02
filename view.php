@@ -6,6 +6,12 @@ ini_set("display_errors", 0 );
 require "mods/menu.php";
 require "mods/funcoes.php";
 
+if($_GET['v']){
+    $categoria = $_GET['v'];
+}else{
+    $categoria = $_POST['tipo'];
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -49,9 +55,9 @@ require "mods/funcoes.php";
 
 <?php
 // Função para exibir os dados da tabela "cpu"
-listaEquipCategoria($_POST['tipo'],'lista_entrada');
+listaEquipCategoria($categoria,'lista_entrada');
 // Função para exibir os dados da tabela "saida_cpu"
-listaEquipCategoria($_POST['tipo'],'lista_saida');
+listaEquipCategoria($categoria,'lista_saida');
 function exibirTabelaCpuSaida($conexao)
 {
     $sql = "SELECT * FROM cpu_saida";
