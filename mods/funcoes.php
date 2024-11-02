@@ -65,6 +65,29 @@ while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
     foreach ($row as $coluna => $valor) {
         
         $lista_entrada .= '<td>' . htmlspecialchars($valor) . '</td>';
+
+        $lista_saida_modal = $banco.' - '.htmlspecialchars($row['ID']).' - '.htmlspecialchars($row['QUANTIDADE']).' - '.htmlspecialchars($row['OBS']);
+
+        $modal_saida .= '<!-- Modal Saída -->
+                            <div class="modal fade" id="lista_saida_modal_'.htmlspecialchars($row['ID']).'" tabindex="-1" role="dialog" aria-labelledby="lista_saida_modal" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="lista_saida_modal">Detalhes da Saída</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            '.$lista_saida_modal.'
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+
     }
 
     // Criar modal para edição de cada item
@@ -128,7 +151,7 @@ while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
                               <button class="btn btn-primary btn-editar" data-toggle="modal" data-target="#lista_entrada_' . htmlspecialchars($banco) . '_' . htmlspecialchars($row['ID']) . '">
                                   <span class="glyphicon glyphicon-pencil"></span> Editar
                               </button>&nbsp;
-                              <button class="btn btn-success btn-saida">
+                              <button class="btn btn-success btn-saida"  data-toggle="modal" data-target="#lista_saida_modal_'.htmlspecialchars($row['ID']).'">
                                   <span class="glyphicon glyphicon-export"></span> Saída
                               </button>
                           </td>';
@@ -161,6 +184,7 @@ while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
                                 </div>
                             </div>';
 
+
     $lista_entrada .= '<script>
                             function filterTable1() {
                                 const input = document.getElementById("filterInput");
@@ -191,6 +215,7 @@ while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
 
     echo $lista_entrada;
     echo $lista_entrada_modal;
+    echo $modal_saida;
     echo $lista_input_modal;
 }
 
