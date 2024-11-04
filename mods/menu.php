@@ -50,22 +50,30 @@ function listaMenu($var){
 
    }
 
-   if($var=='menu_horizontal'){
-        $sql = "SELECT botao_src, nomecategoria FROM categorias ORDER BY nomecategoria";
-        $sql_temp = $PDO->query( $sql );
-        while($temp = $sql_temp->fetch(PDO::FETCH_ASSOC)){
-              $botao_src        = $temp["botao_src"];
-              $nomecategoria    = $temp["nomecategoria"];
+   if ($var == 'menu_horizontal') {
+    $sql = "SELECT botao_src, nomecategoria FROM categorias ORDER BY nomecategoria";
+    $sql_temp = $PDO->query($sql);
+    
+    // Obtém o tipo atual do menu (a categoria ativa)
+    $tipo_ativo = isset($_POST['tipo']) ? $_POST['tipo'] : '';
 
-        $menu_horizontal .= '<li class="nav-item">
-                                <form action="view.php" method="POST" id="form-'.$nomecategoria.'" class="form-inline">
-                                    <input type="hidden" name="tipo" value="'.$nomecategoria.'">
-                                    <button type="submit" class="nav-link btn btn-link">'.$nomecategoria.'</button>
+    while ($temp = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
+        $botao_src = $temp["botao_src"];
+        $nomecategoria = $temp["nomecategoria"];
+
+        // Verifica se a categoria atual é a ativa
+        $active_class = ($tipo_ativo === $nomecategoria) ? 'active' : '';
+
+        $menu_horizontal .= '<li class="nav-item ' . $active_class . '">
+                                <form action="view.php" method="POST" id="form-' . $nomecategoria . '" class="form-inline">
+                                    <input type="hidden" name="tipo" value="' . $nomecategoria . '">
+                                    <button type="submit" class="nav-link btn btn-link">' . $nomecategoria . '</button>
                                 </form>
                             </li>';
-      }
-      echo $menu_horizontal;
-  }
+    }
+    echo $menu_horizontal;
+}
+
   
 }
 

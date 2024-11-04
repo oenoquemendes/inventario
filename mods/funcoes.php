@@ -3,225 +3,247 @@
 error_reporting(0);
 ini_set("display_errors", 0 );
 
-function listaEquipCategoria($tipo,$var){
-  
-  include "conexao.php";
+function listaEquipEntrada($tabela) {
+                                        // Conexão com o banco de dados
+                                        include "conexao.php";
 
-  if($var=='menu'){
-    echo $tipo;
-  }
+                                        // Converte nome da tabela para minúsculo
+                                        $banco = strtolower($tabela);
+                                        $campos_modal = '';
+                                        $modal_saida = '';
+                                        $lista_entrada = '';
 
-  if ($var == 'lista_entrada') {
+                                        // Barra de pesquisa e botão para adicionar novo registro
+                                        $lista_entrada .= '<div class="text-center">
+                                                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#lista_input_modal">Adicionar ' . htmlspecialchars($tabela) . ' <i class="fas fa-plus-circle"></i></button>
+                                                        </div>';
+                                        $lista_entrada .= '<h2>Entrada de ' . htmlspecialchars($tabela) . ' <i class="fas fa-sign-in-alt"></i></h2>
+                                                        <div class="row align-items-center">
+                                                            <div class="col-5">
+                                                                <input type="text" id="filterInput" class="form-control" placeholder="Filtrar por marca, modelo, etc." onkeyup="filterTable()">
+                                                            </div>
+                                                            <div class="col-5">
+                                                                <div id="filteredCount">Total de registros filtrados: 0</div>
+                                                            </div>
+                                                        </div>
+                                                        <p></p>
+                                                        <table id="cpu-table" class="table table-striped table-bordered">';
 
-    $banco = strtolower($tipo);
-
-    
-    $lista_entrada = '<div class="text-center">
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#lista_input_modal">Adicionar ' . htmlspecialchars($tipo) . ' <i class="fas fa-plus-circle"></i></button>
-                    </div>';
-
-    $lista_entrada .= '<h2>Entrada de ' . htmlspecialchars($tipo) . ' <i class="fas fa-sign-in-alt"></i></h2> 
-                      <div class="col-5">
-                          <input type="text" id="filterInput" class="form-control" placeholder="Filtrar por marca, modelo, etc." onkeyup="filterTable1()">
-                      </div>
-                      <table id="cpu-table" class="table table-striped table-bordered"> 
-                          <thead>
-                              <tr>';
-
-    // Obter os nomes das colunas
-    $sql = "SELECT * FROM $banco WHERE $banco.QUANTIDADE>='1'";
-    $sql_temp = $PDO->query($sql);
-
-    // Adicionar os cabeçalhos da tabela
-    for ($i = 0; $i < $sql_temp->columnCount(); $i++) {
-        $meta = $sql_temp->getColumnMeta($i);
-        $lista_entrada .= '<th>' . htmlspecialchars($meta['name']) . '</th>';
-
-        if(htmlspecialchars($meta['name'])=='ID'){
-            $readonlyTag = 'readonly';
-        }else{
-            $readonlyTag = 'required';
-        }
-
-        if((htmlspecialchars($meta['name'])=='QUANTIDADE')||((htmlspecialchars($meta['name'])=='SALA'))){
-            $tipoinput = 'number';
-        }else{
-            $tipoinput = 'text';
-        }
-        $campos_modal .= '<div class="form-group">
-                            <input type="hidden" name="tiporeg" value="'.$banco.'"  id="'.$banco.'">
-                                <label for="inputID">' . htmlspecialchars($meta['name']) . '</label>
-                                <input type="'.$tipoinput.'" class="form-control" id="inputID" name="' . htmlspecialchars($meta['name']) . '" value=" " '.$readonlyTag.'>
-                         </div>';
-    }
-
-// Adicionar a coluna de ações
-$lista_entrada .= '<th>Ações</th>';
-$lista_entrada .= '</tr></thead><tbody>';
-
-// Preencher a tabela com os dados
-while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
-    $lista_entrada .= '<tr>';
-    foreach ($row as $coluna => $valor) {
-        
-        $lista_entrada .= '<td>' . htmlspecialchars($valor) . '</td>';
-
-        $lista_saida_modal = $banco.' - '.htmlspecialchars($row['ID']).' - '.htmlspecialchars($row['QUANTIDADE']).' - '.htmlspecialchars($row['OBS']);
-
-        $modal_saida .= '<!-- Modal Saída -->
-                            <div class="modal fade" id="lista_saida_modal_'.htmlspecialchars($row['ID']).'" tabindex="-1" role="dialog" aria-labelledby="lista_saida_modal" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="lista_saida_modal">Detalhes da Saída</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            '.$lista_saida_modal.'
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>';
-
-    }
-
-    // Criar modal para edição de cada item
-    $lista_entrada_modal .= '<!-- Modal Lista de Entrada-->
-        <div class="modal fade" id="lista_entrada_' . htmlspecialchars($banco) . '_' . htmlspecialchars($row['ID']) . '" tabindex="-1" role="dialog" aria-labelledby="editarModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editarModalLabel"><b>Editar Item ' . htmlspecialchars($row['PATRIMONIO']) . ', ' . htmlspecialchars($row['MARCA']) . ' - ' . htmlspecialchars($row['MODELO']) . '</b></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Conteúdo do formulário de edição -->
-                        <form action="mods/update.php" method="POST">';
-
-    // Construir os campos de entrada no modal com valores específicos
-    foreach ($row as $coluna => $valor) {
-        if(htmlspecialchars($coluna)=='ID'){
-            $readonlyTagEdit = 'readonly';
-        }else{
-            $readonlyTagEdit = 'required';
-        }
-
-        if((htmlspecialchars($coluna)=='QUANTIDADE')||((htmlspecialchars($coluna)=='SALA'))){
-            $tipoinput = 'number';
-        }else{
-            $tipoinput = 'text';
-        }
-        
-        if(htmlspecialchars($coluna)=='OBS'){
-            $lista_entrada_modal .= '<div class="form-group">
-                                    <label for="input_' . htmlspecialchars($coluna) . '">' . htmlspecialchars($coluna) . '</label>
-                                    <textarea class="form-control" id="input_' . htmlspecialchars($coluna) . '" name="' . htmlspecialchars($coluna) . '" '.$readonlyTagEdit.'>' . htmlspecialchars($valor) . '</textarea>
-                                </div>';
-        }else{
-           
-        $lista_entrada_modal .= '<div class="form-group">
-                                    <label for="input_' . htmlspecialchars($coluna) . '">' . htmlspecialchars($coluna) . '</label>
-                                    <input type="'.$tipoinput.'" class="form-control" id="input_' . htmlspecialchars($coluna) . '" name="' . htmlspecialchars($coluna) . '" value="' . htmlspecialchars($valor) . '" '.$readonlyTagEdit.'>
-                                </div>';
-        }
-    }
-
-    $lista_entrada_modal .= '       
-                        
-                    </div>
-                    <div class="modal-footer">
-                    <input type="hidden" name="tiporeg" value="'.$banco.'"  id="'.$banco.'">
-                        <button type="submit" class="btn btn-primary">Salvar alterações</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>';
-
-
-        $lista_entrada .= '<td>
-                              <button class="btn btn-primary btn-editar" data-toggle="modal" data-target="#lista_entrada_' . htmlspecialchars($banco) . '_' . htmlspecialchars($row['ID']) . '">
-                                  <span class="glyphicon glyphicon-pencil"></span> Editar
-                              </button>&nbsp;
-                              <button class="btn btn-success btn-saida"  data-toggle="modal" data-target="#lista_saida_modal_'.htmlspecialchars($row['ID']).'">
-                                  <span class="glyphicon glyphicon-export"></span> Saída
-                              </button>
-                          </td>';
-        $lista_entrada .= '</tr>';
-    }
-
-    $lista_entrada .= '</tbody></table>';
-
-    $lista_input_modal .= '<!-- Modal Input-->
-                            <div class="modal fade" id="lista_input_modal" tabindex="-1" role="dialog" aria-labelledby="editarModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editarModalLabel"><b>INCLUINDO NOVO ' . htmlspecialchars($tipo) . '</b></h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <!-- Conteúdo do formulário de edição -->
-                                            <form action="mods/update.php" method="POST">
-                                                '.$campos_modal.'    
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" class="btn btn-primary">Cadastrar</button>
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                        </div>
-                                         </form>
-                                    </div>
-                                </div>
-                            </div>';
-
-
-    $lista_entrada .= '<script>
-                            function filterTable1() {
-                                const input = document.getElementById("filterInput");
-                                const filter = input.value.toLowerCase();
-                                const table = document.getElementById("cpu-table");
-                                const tr = table.getElementsByTagName("tr");
-
-                                for (let i = 1; i < tr.length; i++) {
-                                    const td = tr[i].getElementsByTagName("td");
-                                    let rowContainsFilterText = false;
-
-                                    for (let j = 0; j < td.length; j++) {
-                                        if (td[j]) {
-                                            const txtValue = td[j].textContent || td[j].innerText;
-                                            if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                                                rowContainsFilterText = true;
-                                                break; // Se já encontrou um texto correspondente, pode sair do loop
-                                            }
+                                        // Monta o cabeçalho da tabela
+                                        $sql = "SELECT * FROM $banco WHERE QUANTIDADE >= '1' AND SALA IN ('15')";
+                                        $sql_temp = $PDO->query($sql);
+                                        $columns = [];
+                                        $rows = [];  
+                                        for ($i = 0; $i < $sql_temp->columnCount(); $i++) {
+                                            $meta = $sql_temp->getColumnMeta($i);
+                                            $columns[] = htmlspecialchars($meta['name']);
                                         }
+                                        $lista_entrada .= renderTableHeader($columns);
+                                        $lista_entrada .= '<tbody>';
+
+                                        // Preenche a tabela com os dados
+                                        while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
+                                            $lista_entrada .= renderTableRow($row);
+                                            $rows[] = $row['ID']; // Armazena cada ID
+                                        }
+
+                                        $lista_entrada .= '</tbody></table>';
+                                        $lista_entrada .= renderInputModal($campos_modal, $banco);
+                                        $lista_entrada .= renderModals($modal_saida, $banco, $rows);
+                                        
+                                        $lista_entrada .= '<script>
+                                            function filterTable() {
+                                                const input = document.getElementById("filterInput");
+                                                const filter = input.value.toLowerCase();
+                                                const table = document.getElementById("cpu-table");
+                                                const tr = table.getElementsByTagName("tr");
+                                                let count = 0; // Contador de registros filtrados
+
+                                                for (let i = 1; i < tr.length; i++) {
+                                                    const td = tr[i].getElementsByTagName("td");
+                                                    let rowContainsFilterText = false;
+
+                                                    for (let j = 0; j < td.length; j++) {
+                                                        if (td[j]) {
+                                                            const txtValue = td[j].textContent || td[j].innerText;
+                                                            if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                                                                rowContainsFilterText = true;
+                                                                break; // Sai do loop se encontrou um texto correspondente
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if (rowContainsFilterText) {
+                                                        tr[i].style.display = ""; // Exibe a linha
+                                                        count++; // Incrementa o contador
+                                                    } else {
+                                                        tr[i].style.display = "none"; // Oculta a linha
+                                                    }
+                                                }
+
+                                                // Atualiza o contador na interface
+                                                document.getElementById("filteredCount").textContent = "Total de registros filtrados: " + count;
+                                            }
+                                        </script>';
+
+                                        echo $lista_entrada;
                                     }
 
-                                    tr[i].style.display = rowContainsFilterText ? "" : "none"; // Exibe ou oculta a linha
+// Função para renderizar o cabeçalho da tabela
+function renderTableHeader($columns) {
+                                        $headerHtml = '<thead><tr>';
+                                        foreach ($columns as $coluna) {
+                                            $headerHtml .= '<th>' . htmlspecialchars($coluna) . '</th>';
+                                        }
+                                        $headerHtml .= '<th>Ações</th></tr></thead>';
+                                        return $headerHtml;
+                                    }
+
+// Função para renderizar uma linha da tabela
+function renderTableRow($row) {
+                                    $rowHtml = '<tr>';
+                                    foreach ($row as $coluna => $valor) {
+                                        if ($coluna === 'DATA_ENTRADA' || $coluna === 'DATA_SAIDA') {
+                                            $valor = $valor ? date('d/m/Y H:i:s', strtotime($valor)) : '';
+                                        }
+                                        $rowHtml .= '<td>' . htmlspecialchars($valor) . '</td>';
+                                    }
+                                    $rowHtml .= '<td>
+                                                    <button class="btn btn-primary btn-editar" data-toggle="modal" data-target="#lista_entrada_' . htmlspecialchars($row['ID']) . '">Editar</button>
+                                                    <button class="btn btn-success btn-saida" data-toggle="modal" data-target="#lista_saida_modal_' . htmlspecialchars($row['ID']) . '">Saída</button>
+                                                </td>';
+                                    $rowHtml .= '</tr>';
+                                    return $rowHtml;
                                 }
-                            }
-                        </script>';
 
 
+// Função para renderizar o modal de entrada
+function renderInputModal($campos_modal, $banco) {
+                                                    return '<!-- Modal Input-->
+                                                            <div class="modal fade" id="lista_input_modal" tabindex="-1" role="dialog" aria-labelledby="editarModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog modal-lg" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="editarModalLabel"><b>INCLUINDO NOVO ' . htmlspecialchars($banco) . '</b></h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <form action="mods/update.php" method="POST">
+                                                                                ' . $campos_modal . '
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="submit" class="btn btn-primary">Cadastrar</button>
+                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                                                        </div>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>';
+                                                }
 
-    echo $lista_entrada;
-    echo $lista_entrada_modal;
-    echo $modal_saida;
-    echo $lista_input_modal;
+// Função para renderizar os modais de saída e edição
+// Função para renderizar os modais de saída e edição
+function renderModals($modal_saida, $banco, $rows) {
+    $modalsHtml = '';
+
+    foreach ($rows as $row) {
+        $id = $row['ID']; // Supondo que cada $row tenha um campo 'ID'
+        $modalsHtml .= '<!-- Modal de Edição para o item ID ' . htmlspecialchars($id) . ' -->
+                        <div class="modal fade" id="lista_entrada_' . htmlspecialchars($row) . '" tabindex="-1" role="dialog" aria-labelledby="editarModalLabel_' . htmlspecialchars($id) . '" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editarModalLabel_' . htmlspecialchars($id) . '">Editar Item ID ' . htmlspecialchars($id) . '</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="mods/update.php" method="POST">
+                                            <input type="hidden" name="tiporeg" value="' . htmlspecialchars($banco) . '">
+                                            ' . FormEdit($banco, $row) . '
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Salvar</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                    </div>
+                                     </form>
+                                </div>
+                            </div>
+                        </div>';
+    }
+
+    return $modalsHtml;
 }
 
-  if($var=='lista_saida'){
+// Função para gerar os campos do formulário de edição
+function FormEdit($banco, $row) {
+    include "conexao.php";
+
+    // Obter os nomes das colunas e os valores dos registros
+    $sql = "SELECT * FROM $banco WHERE $banco.ID = $row";
+    $sql_temp = $PDO->query($sql);
+
+    // Adicionar os valores de cada registro
+    while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
+
+        
+        foreach ($row as $coluna => $valor) {
+                       
+            // Definir atributos de entrada baseados na coluna
+            if($coluna === 'ID'){
+                $readonlyTag = 'readonly';
+            }else{
+                $readonlyTag = '';
+            }
+
+            if(($coluna === 'DATA_ENTRADA' || $coluna === 'DATA_SAIDA' || $coluna === 'OBS')){
+
+                $readonlyTag = '';
+
+            }else{
+                $readonlyTag = 'required';
+            }
+
+            if(($coluna === 'QUANTIDADE' || $coluna === 'SALA') ){
+
+                $tipoinput = 'number';
+
+            }else{
+                $tipoinput = 'text';
+            }
+
+            //$readonlyTag = ($coluna === 'ID') ? 'readonly' : 'required';
+            //$tipoRequired = ($coluna === 'DATA_ENTRADA' || $coluna === 'DATA_SAIDA') ? '' : '';
+            //$tipoinput = ($coluna === 'QUANTIDADE' || $coluna === 'SALA') ? 'number' : 'text';
+
+            // Construir o formulário
+            $formulario_html .= '<div class="form-group">
+                                    <label for="input_' . htmlspecialchars($coluna) . '">' . htmlspecialchars($coluna) . '</label>
+                                    <input type="' . $tipoinput . '" class="form-control" id="input_' . htmlspecialchars($coluna) . '" name="' . htmlspecialchars($coluna) . '" value="' . htmlspecialchars($valor) . '" ' . $readonlyTag . ' >
+                                 </div>';
+        }
+
+    }
+
+
+    // Exibir a tabela e o formulário
+    return $formulario_html;
+}
+
+
+
+
+
+
+/*
+
+
+if($var=='lista_saida'){
     
-    $banco2 = strtolower($tipo).'_saida';
+    $banco2 = strtolower($tipo);
 
     $lista_saida = '<h2>Saída <i class="fas fa-sign-in-alt"></i></h2>
                 <div class="col-5">
@@ -232,7 +254,7 @@ while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
                         <tr>';
 
 // Obter os nomes das colunas
-$sql = "SELECT * FROM $banco2";
+$sql = "SELECT * FROM $banco2 WHERE SALA NOT IN('15')";
 $sql_temp = $PDO->query($sql);
 
 // Adicionar os cabeçalhos da tabela
@@ -242,7 +264,7 @@ for ($i = 0; $i < $sql_temp->columnCount(); $i++) {
 }
 
 // Adicionar a coluna de ações
-$lista_saida .= '<th>Ações</th>';
+$lista_saida .= '<th>DATA</th>';
 $lista_saida .= '</tr></thead><tbody>';
 
 // Preencher a tabela com os dados
@@ -252,12 +274,7 @@ while ($row = $sql_temp->fetch(PDO::FETCH_ASSOC)) {
         $lista_saida .= '<td>' . htmlspecialchars($valor) . '</td>';
     }
     $lista_saida .= '<td>
-                      <button class="btn btn-primary btn-editar">
-                          <span class="glyphicon glyphicon-pencil"></span> Editar
-                      </button>&nbsp;
-                      <button class="btn btn-success btn-saida">
-                          <span class="glyphicon glyphicon-export"></span> Saída
-                      </button>
+                       - 
                     </td>';
     $lista_saida .= '</tr>';
 }
@@ -295,7 +312,6 @@ function filterTable() {
 
   }
 
-
-}
+*/
 
 ?>
