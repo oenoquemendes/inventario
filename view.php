@@ -35,7 +35,20 @@ if ($_GET['v']) {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
-
+    <script>
+    // O código JavaScript para esconder a div após 5 segundos
+    document.addEventListener('DOMContentLoaded', function() {
+        const alertBox = document.querySelector('.alert');
+        if (alertBox) {
+            setTimeout(function() {
+                alertBox.style.opacity = '0'; // Transição suave para invisível
+                setTimeout(function() {
+                    alertBox.style.display = 'none'; // Esconde a div após a animação
+                }, 500); // Espera a duração da animação
+            }, 5000); // 5 segundos
+        }
+    });
+</script>
     <style>
         .alert {
             transition: opacity 0.5s ease; /* Suaviza a transição da opacidade */
@@ -77,7 +90,7 @@ if ($_GET['v']) {
 if (isset($_SESSION['msg'])) {
     $class = strpos($_SESSION['msg'], 'Erro') !== false ? 'alert-error' : 'alert-success';
     echo "<div class='alert $class'>{$_SESSION['msg']}</div>"; 
-   
+    unset($_SESSION['msg']);
 }
 
 // Função para exibir os dados da tabela "cpu"
