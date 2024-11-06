@@ -10,21 +10,14 @@ session_start();
 // Incluir o arquivo de conexão com o banco de dados
 include_once 'conexao.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
     // Capturar o tipo de registro
     $tipoRegistro = $_POST['tiporeg'];
+    $tipoRegistro = strtolower($tipoRegistro);
 
     // Verificar se o ID está presente e não está vazio
     $isUpdate = isset($_POST['ID']) && !empty($_POST['ID']);
     $id = $isUpdate ? $_POST['ID'] : null;
-
-    // Verificar se o ID existe no banco de dados para o tipo de registro fornecido
-    if ($isUpdate) {
-        $checkSql = "SELECT COUNT(*) FROM $tipoRegistro WHERE ID = ?";
-        $stmtCheck = $PDO->prepare($checkSql);
-        $stmtCheck->execute([$id]);
-        $exists = $stmtCheck->fetchColumn() > 0;
-    }
 
     // Inicializar as variáveis para colunas, placeholders e valores
     $colunas = [];
@@ -32,7 +25,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $valores = [];
     $setClause = [];
 
-    // Preparar a consulta
+    // Se não for uma atualização (ou seja, é um insert), checar a duplicidade
+    if (!$isUpdate) {
+        // Verificar se PATRIMONIO, SERIE e SALA são válidos para a duplicidade
+        if (!empty($_POST['PATRIMONIO']) && !empty($_POST['SERIE']) && $_POST['SALA'] == 15) {
+            $checkDupSql = "SELECT COUNT(*) FROM $tipoRegistro WHERE PATRIMONIO = ? AND SERIE = ? AND SALA = 15";
+            $stmtDupCheck = $PDO->prepare($checkDupSql);
+            $stmtDupCheck->execute([$_POST['PATRIMONIO'], $_POST['SERIE']]);
+            $duplicateExists = $stmtDupCheck->fetchColumn() > 0;
+
+            if ($duplicateExists) {
+                $_SESSION['msg'] = "Objeto já está cadastrado.";
+                header("Location: ../view.php?v=$tipoRegistro");
+                exit;
+            }
+        }
+    }
+
+    // Preparar a consulta de inserção ou atualização
     foreach ($_POST as $coluna => $valor) {
         if ($coluna !== 'tiporeg' && $coluna !== 'ID') {
             // Trata campos específicos, como DATA_ENTRADA e DATA_SAIDA
@@ -47,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $valores[] = $valor;
             }
 
-            if ($isUpdate && $exists) {
+            if ($isUpdate) {
                 $setClause[] = "$coluna = ?";
             } else {
                 $colunas[] = $coluna;
@@ -57,9 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Se o ID existir, faça o UPDATE; caso contrário, faça o INSERT
-    if ($isUpdate && $exists) {
-        $valores[] = $id; // Adicionar o ID ao final dos valores para o WHERE
+    if ($isUpdate) {
         $sql = "UPDATE $tipoRegistro SET " . implode(', ', $setClause) . " WHERE ID = ?";
+        $valores[] = $id; // Adicionar o ID ao final dos valores para o WHERE
     } else {
         $sql = "INSERT INTO $tipoRegistro (" . implode(',', $colunas) . ") VALUES (" . implode(',', $placeholders) . ")";
     }
@@ -68,17 +78,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $PDO->prepare($sql);
     try {
         $stmt->execute($valores);
-        $_SESSION['msg'] = ($isUpdate && $exists) ? "Registro atualizado com sucesso!" : "Registro inserido com sucesso!";
+        $_SESSION['msg'] = ($isUpdate) ? "Registro atualizado com sucesso!" : "Registro inserido com sucesso!";
         header("Location: ../view.php?v=$tipoRegistro"); // Redireciona para a página anterior
         exit;
     } catch (PDOException $e) {
         error_log($e->getMessage()); // Log do erro
-        $_SESSION['msg'] = "Erro ao " . (($isUpdate && $exists) ? "atualizar" : "inserir") . " o registro: " . $e->getMessage();
+        $_SESSION['msg'] = "Erro ao " . (($isUpdate) ? "atualizar" : "inserir") . " o registro: " . $e->getMessage();
         header("Location: ../view.php?v=$tipoRegistro"); // Redireciona para a página anterior
         exit;
     }
-    
 }
+
+
 
 // Redirecionar
 // header("Location: ../view.php?v=$tipoRegistro");

@@ -8,6 +8,7 @@ session_start();
 
 require "mods/menu.php";
 require "mods/funcoes.php";
+require "mods/modalAdd.php";
 
 if ($_GET['v']) {
     $tabela = $_GET['v'];
@@ -29,6 +30,7 @@ if ($_GET['v']) {
     
     <!-- Icones Awesome -->
     <script src="https://use.fontawesome.com/releases/v5.14.0/js/all.js" data-auto-replace-svg="nest"></script>
+    
 
     <!-- Adicione os arquivos JS do jQuery, Bootstrap e DataTables -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -73,7 +75,7 @@ if ($_GET['v']) {
         <h1><span>Gestão de Inventário de TI</span></h1>
 </div>
 
-<!-- Botão "Voltar" -->
+<!-- MENU HORIZONTAL -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <a class="navbar-brand" href="index.php">Home Page</a>
@@ -93,11 +95,11 @@ if (isset($_SESSION['msg'])) {
     unset($_SESSION['msg']);
 }
 
+echo botaoIncluirModal($tabela);
 // Função para exibir os dados da tabela "cpu"
 listaEquipEntrada($tabela); 
 // Função para exibir os dados da tabela "saida_cpu"
 listaEquipCategoria($categoria,'lista_saida');
-
 ?>
 
 <script>
